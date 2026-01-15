@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: protocol-monitor-db
+    environment:
+      POSTGRES_DB: protocol_monitor
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - monitor-network
+
+  monitor:
+    build: .
+    container_name: protocol-monitor
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: protocol_monitor
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      LOG_LEVEL: INFO
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: python src/pipeline.py
+    networks:
+      - monitor-network
+
+  api:
+    build: .
+    container_name: protocol-monitor-api
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: protocol_monitor
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      LOG_LEVEL: INFO
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: python src/api.py
+    networks:
+      - monitor-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: protocol-monitor-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: ''
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./grafana/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - monitor-network
+
+volumes:
+  postgres_data:
+  grafana_data:
+
+networks:
+  monitor-network:
+    driver: bridge
