@@ -72,7 +72,7 @@ class AnomalyDetector:
         
         drop_percent = ((previous_tvl - current_tvl) / previous_tvl) * 100
         
-        if drop_percent > self.thresholds['tvl_drop_24h_percent']:
+        if drop_percent >= self.thresholds['tvl_drop_24h_percent']:
             return {
                 'protocol_name': protocol_name,
                 'alert_type': 'tvl_drop',

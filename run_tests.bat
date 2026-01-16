@@ -19,6 +19,7 @@ if errorlevel 1 (
 REM Run tests with coverage
 echo.
 echo [2/2] Running tests with coverage...
+set PYTHONPATH=%CD%\src;%PYTHONPATH%
 pytest tests\ -v --cov=src --cov-report=term-missing --cov-report=html
 if errorlevel 1 (
     echo.
