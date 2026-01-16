@@ -8,11 +8,19 @@ from typing import Dict, Optional
 logger = logging.getLogger(__name__)
 
 
+# Sentinel value to distinguish between None and not-provided
+_UNSET = object()
+
 class SlackNotifier:
     """Send alerts to Slack channel via webhook."""
     
-    def __init__(self, webhook_url: Optional[str] = None):
-        self.webhook_url = webhook_url or os.getenv('SLACK_WEBHOOK_URL')
+    def __init__(self, webhook_url: Optional[str] = _UNSET):
+        # If webhook_url is explicitly provided (even if None), use it
+        # Otherwise, fall back to environment variable
+        if webhook_url is not _UNSET:
+            self.webhook_url = webhook_url
+        else:
+            self.webhook_url = os.getenv('SLACK_WEBHOOK_URL')
         self.enabled = bool(self.webhook_url)
         
         if not self.enabled:
