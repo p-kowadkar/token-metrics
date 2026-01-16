@@ -1,0 +1,62 @@
+graph TB
+    subgraph External["External Services"]
+        API["DefiLlama API<br/>(TVL, APY, Utilization)"]
+        Slack["Slack Webhook<br/>(Alert Notifications)"]
+    end
+
+    subgraph Pipeline["Monitoring Pipeline Container"]
+        Pipeline_Main["pipeline.py<br/>(Orchestrator)"]
+        Ingest["ingest.py<br/>(API Client with Retries)"]
+        Detector["anomaly_detector.py<br/>(Detection Logic)"]
+        Notifier["notifications.py<br/>(Slack Integration)"]
+    end
+
+    subgraph Database["PostgreSQL Database"]
+        Snapshots[("protocol_snapshots<br/>TVL, APY, Utilization")]
+        Alerts[("protocol_alerts<br/>Severity, Message, Timestamps")]
+    end
+
+    subgraph Services["Backend Services"]
+        FastAPI["FastAPI<br/>(REST Endpoints)"]
+        Grafana["Grafana Dashboard<br/>(Visualization)"]
+    end
+
+    subgraph Consumers["Data Consumers"]
+        Mobile["Mobile App"]
+        Risk["Risk Engine"]
+        Team["DevOps Team"]
+    end
+
+    %% Data Flow
+    API -->|"Fetch Metrics"| Ingest
+    Ingest -->|"Raw Data"| Pipeline_Main
+    Pipeline_Main -->|"Store Snapshots"| Snapshots
+    Pipeline_Main -->|"Check Anomalies"| Detector
+    Detector -->|"Detect Events"| Alerts
+    Alerts -->|"Trigger Notification"| Notifier
+    Notifier -->|"Send Alert"| Slack
+    
+    %% API Access
+    Snapshots -->|"Query History"| FastAPI
+    Alerts -->|"Query Alerts"| FastAPI
+    FastAPI -->|"JSON Response"| Mobile
+    FastAPI -->|"JSON Response"| Risk
+    
+    %% Grafana Visualization
+    Snapshots -->|"Time Series"| Grafana
+    Alerts -->|"Alert Table"| Grafana
+    Grafana -->|"Visual Monitoring"| Team
+    Slack -->|"Real-time Alerts"| Team
+
+    %% Styling
+    classDef external fill:#e1f5ff,stroke:#0288d1,stroke-width:2px
+    classDef pipeline fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef database fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef services fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    classDef consumers fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+
+    class API,Slack external
+    class Pipeline_Main,Ingest,Detector,Notifier pipeline
+    class Snapshots,Alerts database
+    class FastAPI,Grafana services
+    class Mobile,Risk,Team consumers
