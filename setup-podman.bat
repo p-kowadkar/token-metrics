@@ -7,6 +7,25 @@ echo Setting up Token Metrics Monitor with Podman (Full Stack)...
 echo ====================================================================
 echo.
 
+REM Load environment variables from .env file
+if exist .env (
+    echo Loading environment variables from .env file...
+    for /f "usebackq tokens=1,* delims==" %%a in (".env") do (
+        REM Skip comments and empty lines
+        echo %%a | findstr /r "^#" >nul
+        if errorlevel 1 (
+            if not "%%a"=="" (
+                set "%%a=%%b"
+            )
+        )
+    )
+    echo Environment variables loaded!
+    echo.
+) else (
+    echo Note: .env file not found. Using defaults.
+    echo.
+)
+
 REM Create a pod (equivalent to docker-compose network)
 echo [1/8] Creating pod...
 podman pod create --name protocol-monitor-pod -p 8000:8000 -p 5432:5432 -p 3000:3000
