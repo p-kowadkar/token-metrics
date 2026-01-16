@@ -18,13 +18,13 @@
       "title": "Total Value Locked (TVL) Over Time",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_POSTGRESQL}"
+        "uid": "PCC52D03280B7034C"
       },
       "targets": [
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_POSTGRESQL}"
+            "uid": "PCC52D03280B7034C"
           },
           "format": "time_series",
           "rawSql": "SELECT timestamp AS \"time\", protocol_name as metric, tvl_usd as value FROM protocol_snapshots WHERE $__timeFilter(timestamp) ORDER BY timestamp",
@@ -61,13 +61,13 @@
       "title": "APY Over Time",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_POSTGRESQL}"
+        "uid": "PCC52D03280B7034C"
       },
       "targets": [
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_POSTGRESQL}"
+            "uid": "PCC52D03280B7034C"
           },
           "format": "time_series",
           "rawSql": "SELECT timestamp AS \"time\", protocol_name as metric, apy_7d as value FROM protocol_snapshots WHERE $__timeFilter(timestamp) ORDER BY timestamp",
@@ -104,13 +104,13 @@
       "title": "Utilization Rate",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_POSTGRESQL}"
+        "uid": "PCC52D03280B7034C"
       },
       "targets": [
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_POSTGRESQL}"
+            "uid": "PCC52D03280B7034C"
           },
           "format": "time_series",
           "rawSql": "SELECT timestamp AS \"time\", protocol_name as metric, utilization_rate * 100 as value FROM protocol_snapshots WHERE $__timeFilter(timestamp) ORDER BY timestamp",
@@ -164,13 +164,13 @@
       "title": "Recent Alerts",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_POSTGRESQL}"
+        "uid": "PCC52D03280B7034C"
       },
       "targets": [
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_POSTGRESQL}"
+            "uid": "PCC52D03280B7034C"
           },
           "format": "table",
           "rawSql": "SELECT protocol_name, alert_type, severity, message, created_at, status FROM protocol_alerts ORDER BY created_at DESC LIMIT 20",
@@ -238,13 +238,13 @@
       "title": "Total Protocols",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_POSTGRESQL}"
+        "uid": "PCC52D03280B7034C"
       },
       "targets": [
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_POSTGRESQL}"
+            "uid": "PCC52D03280B7034C"
           },
           "format": "table",
           "rawSql": "SELECT COUNT(DISTINCT protocol_name) as value FROM protocol_snapshots",
@@ -288,13 +288,13 @@
       "title": "Open Alerts",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_POSTGRESQL}"
+        "uid": "PCC52D03280B7034C"
       },
       "targets": [
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_POSTGRESQL}"
+            "uid": "PCC52D03280B7034C"
           },
           "format": "table",
           "rawSql": "SELECT COUNT(*) as value FROM protocol_alerts WHERE status = 'open'",
@@ -346,13 +346,13 @@
       "title": "Critical Alerts",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_POSTGRESQL}"
+        "uid": "PCC52D03280B7034C"
       },
       "targets": [
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_POSTGRESQL}"
+            "uid": "PCC52D03280B7034C"
           },
           "format": "table",
           "rawSql": "SELECT COUNT(*) as value FROM protocol_alerts WHERE severity = 'CRITICAL' AND status = 'open'",
@@ -400,13 +400,13 @@
       "title": "Total TVL",
       "datasource": {
         "type": "postgres",
-        "uid": "${DS_POSTGRESQL}"
+        "uid": "PCC52D03280B7034C"
       },
       "targets": [
         {
           "datasource": {
             "type": "postgres",
-            "uid": "${DS_POSTGRESQL}"
+            "uid": "PCC52D03280B7034C"
           },
           "format": "table",
           "rawSql": "SELECT SUM(tvl_usd) as value FROM (SELECT DISTINCT ON (protocol_name) protocol_name, tvl_usd FROM protocol_snapshots ORDER BY protocol_name, timestamp DESC) as latest",
