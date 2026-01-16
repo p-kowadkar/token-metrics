@@ -173,7 +173,7 @@
             "uid": "PCC52D03280B7034C"
           },
           "format": "table",
-          "rawSql": "SELECT protocol_name, alert_type, severity, message, created_at, status FROM protocol_alerts ORDER BY created_at DESC LIMIT 20",
+          "rawSql": "SELECT protocol_name, alert_type, severity, message, triggered_at, CASE WHEN resolved_at IS NULL THEN 'open' ELSE 'resolved' END as status FROM protocol_alerts ORDER BY triggered_at DESC LIMIT 20",
           "refId": "A"
         }
       ],
@@ -297,7 +297,7 @@
             "uid": "PCC52D03280B7034C"
           },
           "format": "table",
-          "rawSql": "SELECT COUNT(*) as value FROM protocol_alerts WHERE status = 'open'",
+          "rawSql": "SELECT COUNT(*) as value FROM protocol_alerts WHERE resolved_at IS NULL",
           "refId": "A"
         }
       ],
@@ -355,7 +355,7 @@
             "uid": "PCC52D03280B7034C"
           },
           "format": "table",
-          "rawSql": "SELECT COUNT(*) as value FROM protocol_alerts WHERE severity = 'CRITICAL' AND status = 'open'",
+          "rawSql": "SELECT COUNT(*) as value FROM protocol_alerts WHERE severity = 'CRITICAL' AND resolved_at IS NULL",
           "refId": "A"
         }
       ],
