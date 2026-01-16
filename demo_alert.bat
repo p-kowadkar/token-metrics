@@ -21,7 +21,7 @@ pause
 echo.
 
 REM Run the demo script in the Podman container
-podman run --rm --pod protocol-monitor-pod -e DB_HOST=localhost -e DB_PORT=5432 -e DB_NAME=protocol_monitor -e DB_USER=postgres -e DB_PASSWORD=postgres -e SLACK_WEBHOOK_URL=%SLACK_WEBHOOK_URL% protocol-monitor:latest python demo_alert.py
+podman run --rm --pod protocol-monitor-pod -e DB_HOST=localhost -e DB_PORT=5432 -e DB_NAME=protocol_monitor -e DB_USER=postgres -e DB_PASSWORD=postgres -e SLACK_WEBHOOK_URL=%SLACK_WEBHOOK_URL% protocol-monitor:latest python /app/demo_alert.py
 
 echo.
 echo ====================================================================
